@@ -1,14 +1,38 @@
-from flask import Flask, render_template
+from flask import Flask, render_template #LIBRAIRIE NECESSAIRE A LA 
+import sqlite3
+from werkzeug.exceptions import abort
 
 app = Flask(__name__, template_folder='templates')
 
 
-
 @app.route('/')
-def home():
-    return render_template("index.html", nom = "monsieur")
+def index():
+    conn = get_db_connection()
+    tasks = conn.execute('SELECT * FROM tasks').fetchall()
+    conn.close()
+    return render_template('index.html', tasks = tasks)
 
 
+def get_db_connection():
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def get_task(task_id):
+    conn = get_db_connection()
+    task = conn.execute('SELECT * FROM tasks WHERE id = ?',
+                        (task_id,)).fetchone()
+    conn.close()
+    if task is None:
+        abort(404)
+    return task
+
+
+@app.route('/<int:task_id>')
+def task(task_id):
+    task = get_task(task_id)
+    return render_template('task.html', task=task)
 
 # 1. Ajoute une nouvelle tâche à la liste des tâches avec un titre, une description et une date d'échéance.
 def add_task(title, description, due_date):

@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Ma Page Flask</title>
-</head>
-<body>
-    <h1>Bienvenue sur ma page Flask {{nom}}</h1>
-    <p>C'est une page de démonstration.</p>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Bienvenue dans votre gestionnaire de tâches {% endblock %}</h1>
+    {% for task in tasks %}`
+        <a href="{{ url_for('task', task_id=task['id']) }}">
+            <h2>{{ task['title'] }}</h2>
+        </a>
+        <span class="badge badge-primary">{{ task['created'] }}</span>
+        <hr>
+    {% endfor %}
+{% endblock %}
