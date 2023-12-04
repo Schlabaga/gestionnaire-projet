@@ -18,6 +18,7 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+print("blalab")
 
 def get_task(task_id):
     conn = get_db_connection()
