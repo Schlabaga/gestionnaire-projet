@@ -4,7 +4,8 @@ from werkzeug.exceptions import abort
 
 app = Flask(__name__, template_folder='templates')
 
-
+print("test 2")
+s
 @app.route('/')
 def index():
     conn = get_db_connection()
