@@ -31,12 +31,27 @@ class Tache:
         self.titre = titre
         self.contenu = contenu
         self.date = date or datetime.utcnow()
-
+        
     def jour_semaine(self):
         return self.date.strftime('%A')  # %A pour obtenir le nom du jour de la semaine
 
         
+class EmploiDuTemps:     
+     
+    def __init__(self, base_de_donnees):
+
+        self.base_de_donnees = base_de_donnees
+        self.taches = []
+
+    def ajouter_tache_edt(self,id):
+        
+        with self.base_de_donnees as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT id, titre, contenu, date FROM taches WHERE id = id ORDER BY date')
+            print(cursor.fetchall())
+        
 class GestionnaireTaches:
+    
     def __init__(self, base_de_donnees):
         self.base_de_donnees = base_de_donnees
         self.taches = []
@@ -110,6 +125,9 @@ class ApplicationFlask:
 if __name__ == '__main__':
     base_de_donnees = sqlite3.connect('emploidutemps.db', check_same_thread=False)
     initialiser_base_de_donnees(base_de_donnees)
+    Instance = EmploiDuTemps(base_de_donnees)
+
+    Instance.ajouter_tache_edt(1)   
     
     app_flask = ApplicationFlask(base_de_donnees)
     app_flask.demarrer()
