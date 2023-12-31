@@ -1,24 +1,115 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emploi du Temps</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        a {
+            color: #4caf50;
+            margin-left: 10px;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <h1>Emploi du Temps</h1>
     <form action="/ajouter_tache" method="post">
         <label for="titre">Nouveau Titre :</label>
         <input type="text" name="titre" required>
+        
         <label for="contenu">Nouveau Contenu :</label>
         <textarea name="contenu" required></textarea>
+        
+        <label for="date">Date :</label>
+        <input type="date" name="date" min="{{ date_actuelle }}" required>
+        
+        <label for="heure">Heure :</label>
+        <input type="time" name="heure" required>
+        
         <button type="submit">Ajouter</button>
     </form>
+    
     <ul>
         {% for tache in taches %}
             <li>
-                {{ tache.titre }} - {{ tache.date }}
+                <strong>Evénement:</strong> {{ tache.titre }}<br>
+                <strong>Sujet:</strong> {{ tache.contenu }}<br>
+                <strong>Date et Heure:</strong> {{ tache.date }}
                 <a href="{{ url_for('supprimer_tache', id=tache.id) }}">Supprimer</a>
             </li>
         {% endfor %}
