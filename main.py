@@ -1,80 +1,53 @@
-from flask import Flask, render_template #LIBRAIRIE NECESSAIRE A LA 
+from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
-from werkzeug.exceptions import abort
+from datetime import datetime
 
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__)
 
-print("test 2")
-s
+def creer_connexion():
+    return sqlite3.connect('emploidutemps.db')
+
+def initialiser_base_de_donnees():
+    conn = creer_connexion()
+    with conn:
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS taches (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                titre TEXT NOT NULL,
+                contenu TEXT NOT NULL,
+                date DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+
 @app.route('/')
-def index():
-    conn = get_db_connection()
-    tasks = conn.execute('SELECT * FROM tasks').fetchall()
-    conn.close()
-    return render_template('index.html', tasks = tasks)
+def accueil():
+    conn = creer_connexion()
+    with conn:
+        cursor = conn.execute('SELECT * FROM taches ORDER BY date')
+        taches = cursor.fetchall()
+    return render_template('accueil.html', taches=taches)
+
+@app.route('/ajouter_tache', methods=['POST'])
+def ajouter_tache():
+    if request.method == 'POST':
+        titre = request.form['titre']
+        contenu = request.form['contenu']
+        conn = creer_connexion()
+        with conn:
+            conn.execute('INSERT INTO taches (titre, contenu) VALUES (?, ?)', (titre, contenu))
+    return redirect(url_for('accueil'))
 
 
-def get_db_connection():
-    conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row
-    return conn
-
-print("blalab")
-
-def get_task(task_id):
-    conn = get_db_connection()
-    task = conn.execute('SELECT * FROM tasks WHERE id = ?',
-                        (task_id,)).fetchone()
-    conn.close()
-    if task is None:
-        abort(404)
-    return task
+@app.route('/supprimer_tache/<int:id>')
+def supprimer_tache(id):
+    conn = creer_connexion()
+    with conn:
+        conn.execute('DELETE FROM taches WHERE id = ?', (id,))
+    return redirect(url_for('accueil'))
 
 
-@app.route('/<int:task_id>')
-def task(task_id):
-    task = get_task(task_id)
-    return render_template('task.html', task=task)
 
-# 1. Ajoute une nouvelle tâche à la liste des tâches avec un titre, une description et une date d'échéance.
-def add_task(title, description, due_date):
-    pass
-
-# 2. Supprime la tâche avec l'ID spécifié de la liste des tâches.
-def delete_task(task_id):
-    pass
-
-# 3. Modifie les détails d'une tâche existante en utilisant son ID.
-def update_task(task_id, title, description, due_date):
-    pass
-
-# 4. Renvoie les détails d'une tâche spécifique en fonction de son ID.
-def get_task(task_id):
-    pass
-
-# 5. Renvoie la liste de toutes les tâches actuellement enregistrées.
-def list_tasks():
-    pass
-
-# 6. Compte le nombre total de tâches dans la liste.
-def count_tasks():
-    pass
-
-# 7. Renvoie une liste de tâches qui ont une date d'échéance égale à celle spécifiée.
-def filter_tasks(due_date):
-    pass
-
-# 8. Marque une tâche comme complétée en utilisant son ID.
-def mark_task_as_completed(task_id):
-    pass
-
-# 9. Renvoie une liste des tâches dont la date d'échéance est dépassée.
-def find_task_echeance():
-    pass
-
-# 10. Vérifie récursivement si une tâche est complétée en vérifiant si toutes ses sous-tâches sont complétées.
-def recursive_task_completion_check(task_id):
-    pass
 
 if __name__ == '__main__':
+    initialiser_base_de_donnees()
     app.run(debug=True)

@@ -1,7 +1,0 @@
-{% extends 'base.html' %}
-
-{% block content %}
-    <h2>{% block title %} {{ task['title'] }} {% endblock %}</h2>
-    <span class="badge badge-primary">{{ task['created'] }}</span>
-    <p>{{ task['content'] }}</p>
-{% endblock %}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emploi du Temps</title>
+</head>
+<body>
+    <h1>Emploi du Temps</h1>
+    <form action="/ajouter_tache" method="post">
+        <label for="titre">Nouveau Titre :</label>
+        <input type="text" name="titre" required>
+        <label for="contenu">Nouveau Contenu :</label>
+        <textarea name="contenu" required></textarea>
+        <button type="submit">Ajouter</button>
+    </form>
+    
+    <ul>
+        {% for tache in taches %}
+            <li>
+                {{ tache[1] }} - {{ tache[2] }} - {{ tache[3] }}
+                <a href="{{ url_for('supprimer_tache', id=tache[0]) }}">Supprimer</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
