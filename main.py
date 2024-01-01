@@ -17,31 +17,29 @@ def initialiser_base_de_donnees(conn):
                 titre TEXT NOT NULL,
                 contenu TEXT NOT NULL,
                 date DATETIME,
-                creation DATETIME DEFAULT CURRENT_TIMESTAMP,
-                priorite BIT 
+                urgent BIT, 
+                creation DATETIME DEFAULT CURRENT_TIMESTAMP  
             )
         ''')
 
 class Tache:
-    def __init__(self, id, titre, contenu, priorite, creation, date=None):
+    def __init__(self, id, titre, contenu, urgent, date, creation=None):
         self.id = id
         self.titre = titre
         self.contenu = contenu
-        self.date = date or datetime.utcnow()
-        self.priorite = priorite
-        self.creation = creation
-        print(self.creation)
-        
-    def jour_semaine(self):
-        return self.date.strftime('%A')
+        self.date = date
+        self.urgent = urgent
+        self.creation = creation or datetime.utcnow()
+
 
 class GestionnaireTaches:
     def __init__(self, base_de_donnees):
         self.base_de_donnees = base_de_donnees
         self.taches = []
 
-    def ajouter_tache(self, titre, contenu, priorite, date_str):
-        date_formattee = datetime.strptime(date_str, '%Y-%m-%d').strftime('%d/%m/%Y')
+
+    def ajouter_tache(self, titre, contenu, date_str, heure_str, urgent):
+        date_formattee = datetime.strptime(date_str + ' ' + heure_str, '%Y-%m-%d %H:%M').strftime('%d/%m/%Y %H:%M')
         date_saisie = datetime.strptime(date_str, '%Y-%m-%d').date()
 
         date_actuelle = date.today()
@@ -51,10 +49,11 @@ class GestionnaireTaches:
 
         with self.base_de_donnees as conn:
             cursor = conn.cursor()
-            cursor.execute('INSERT INTO taches (titre, contenu, date, priorite) VALUES (?, ?, ?, ?)',
-                           (titre, contenu, date_formattee, priorite))
+            cursor.execute('INSERT INTO taches (titre, contenu, date, urgent, creation) VALUES (?, ?, ?, ?, ?)',
+                        (titre, contenu, date_formattee, urgent, datetime.utcnow()))
 
         self.taches = self.recuperer_taches()
+
 
     def supprimer_tache(self, tache_id):
         with self.base_de_donnees as conn:
@@ -65,7 +64,7 @@ class GestionnaireTaches:
     def recuperer_taches(self):
         with self.base_de_donnees as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT id, titre, contenu, date, priorite FROM taches ORDER BY date')
+            cursor.execute('SELECT id, titre, contenu, urgent, date, creation FROM taches ORDER BY date')
             return [Tache(*row) for row in cursor.fetchall()]
 
 class ApplicationFlask:
@@ -88,19 +87,20 @@ class ApplicationFlask:
         return render_template('accueil.html', taches=taches)
 
     def ajouter_tache(self):
-        
         if request.method == 'POST':
             titre = request.form['titre']
             contenu = request.form['contenu']
             date_str = request.form['date']
-            priorite = request.form.get('priorite', 0)
+            heure_str = request.form['heure']
+            urgent = request.form.get('urgent', 0)
 
             date_actuelle = date.today()
             date_saisie = datetime.strptime(date_str, '%Y-%m-%d').date()
 
             if date_saisie >= date_actuelle:
                 try:
-                    self.gestionnaire_taches.ajouter_tache(titre, contenu, date_str, priorite)
+
+                    self.gestionnaire_taches.ajouter_tache(titre, contenu, date_str, heure_str, urgent)
                     flash("Tâche ajoutée avec succès.")
                 except ValueError as e:
                     flash("Mamamia")
@@ -112,22 +112,36 @@ class ApplicationFlask:
         return redirect(url_for('accueil'))
     
 
+    def tri_rapide_par_nom(self, taches): #FONCTION RECURSIVE DE TRI
+        
+        if len(taches) <= 1:
+            return taches
+        else:
+            pivot = taches[0]
+            taches_inf = [tache for tache in taches[1:] if tache.titre < pivot.titre]
+            taches_sup = [tache for tache in taches[1:] if tache.titre >= pivot.titre]
+            return self.tri_rapide_par_nom(taches_inf) + [pivot] + self.tri_rapide_par_nom(taches_sup)
+
+
     def trier_evenements(self):
         critere_tri = request.form.get('tri')
         taches_triees = []
 
-        if critere_tri == 'priorite':
-            taches_triees = sorted(self.gestionnaire_taches.taches, key=lambda x: x.priorite)
+        if critere_tri == 'urgent':
+
+            print(self.gestionnaire_taches.taches)
+
+            
         elif critere_tri == 'nom':
-            taches_triees = sorted(self.gestionnaire_taches.taches, key=lambda x: x.titre)
+            
+            taches_triees = self.tri_rapide_par_nom(self.gestionnaire_taches.taches)
+            
         elif critere_tri == 'date':
             taches_triees = sorted(self.gestionnaire_taches.taches, key=lambda x: x.creation)
 
-        print("Tâches triées :", taches_triees)
 
         return render_template('accueil.html', taches=taches_triees)
 
-    
     def demarrer(self):
         self.app.run(debug=True)
 

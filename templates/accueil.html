@@ -121,21 +121,27 @@
             <form action="/trier_evenements" method="post">
                 <label for="tri">Trier par :</label>
                 <select name="tri" id="tri">
-                    <option value="priorite">Priorité</option>
+                    <option value="urgent">Priorité</option>
                     <option value="nom">Nom</option>
                     <option value="date">Date</option>
                 </select>
                 <button type="submit">Trier</button>
+            
+                <a href="{{ url_for('accueil') }}">
+                    <button type="button">Retour</button>
+                </a>
             </form>
         
             {% for tache in taches %}
-                <li>
-                    <strong>Evénement:</strong> {{ tache.titre }}<br>
-                    <strong>Sujet:</strong> {{ tache.contenu }}<br>
-                    <strong>Date et Heure:</strong> {{ tache.date }}
-                    <a href="{{ url_for('supprimer_tache', id=tache.id) }}">Supprimer</a>
-                </li>
-            {% endfor %}
+            <li>
+                <strong>Evénement:</strong> {{ tache.titre }}<br>
+                <strong>Sujet:</strong> {{ tache.contenu }}<br>
+                <strong>Date et Heure:</strong> {{ tache.date }}<br>
+                <strong>Urgent:</strong> {% if tache.urgent %}Oui{% else %}Non{% endif %}<br>
+                <strong>Créé le:</strong> {{ tache.creation }}<br><br>
+                <a href="{{ url_for('supprimer_tache', id=tache.id) }}">Supprimer</a>
+            </li>
+        {% endfor %}
         </ul>
     {% else %}
         <p>Aucun événement à afficher.</p>

@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:gestionnaire-projet}/emploidutemps.db",
+            "name": "Projet DB"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
