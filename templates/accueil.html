@@ -1,30 +1,38 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <!-- Métadonnées du document -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emploi du Temps</title>
+
+    <!-- Styles CSS en ligne -->
     <style>
+        /* Styles pour le corps de la page */
         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
             margin: 20px;
         }
 
+        /* Styles pour les titres */
         h1 {
             color: #333;
         }
 
+        /* Styles pour le formulaire */
         form {
             margin-bottom: 20px;
         }
 
+        /* Styles pour les libellés des champs de formulaire */
         label {
             display: block;
             margin-bottom: 5px;
             color: #555;
         }
 
+        /* Styles pour les champs de formulaire */
         input, textarea {
             width: 100%;
             padding: 8px;
@@ -32,6 +40,7 @@
             box-sizing: border-box;
         }
 
+        /* Styles pour les boutons */
         button {
             background-color: #4caf50;
             color: white;
@@ -41,6 +50,7 @@
             cursor: pointer;
         }
 
+        /* Styles pour les listes et éléments de liste */
         ul {
             list-style-type: none;
             padding: 0;
@@ -54,16 +64,19 @@
             border-radius: 4px;
         }
 
+        /* Styles pour les liens */
         a {
             color: #4caf50;
             margin-left: 10px;
             text-decoration: none;
         }
 
+        /* Styles pour les liens au survol */
         a:hover {
             text-decoration: underline;
         }
 
+        /* Styles pour les champs de sélection */
         select {
             padding: 8px;
             border: 1px solid #ddd;
@@ -74,77 +87,103 @@
             cursor: pointer;
         }
 
+        /* Styles pour le conteneur du formulaire */
+        .form-container {
+            width: 75%;
+            margin: 0 auto;
+        }
+
+        /* Styles pour les éléments liés à l'urgence */
+        .urgent-label {
+            margin-top: 10px;
+            text-align: left; /* Mettez à jour pour aligner à gauche */
+        }
+
         .urgent-checkbox {
             margin-top: 10px;
         }
-        
-    
     </style>
 </head>
 <body>
-    <h1>Emploi du Temps</h1>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class="flashes">
-                {% for message in messages %}
-                    <li>{{ message }}</li>
+    <!-- Conteneur principal avec le formulaire et la liste d'événements -->
+    <div class="form-container">
+        <h1>Emploi du Temps</h1>
+
+        <!-- Affichage des messages flash (erreurs ou succès) -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Formulaire pour ajouter une nouvelle tâche -->
+        <form action="/ajouter_tache" method="post">
+            
+            <label for="titre">Nouveau Titre :</label>
+            <input type="text" name="titre" required>
+            
+            <label for="contenu">Nouveau Contenu :</label>
+            <textarea name="contenu" required></textarea>
+            
+            <label for="date">Date :</label>
+            <input type="date" name="date" min="{{ date_actuelle }}" required>
+            
+            <label for="heure">Heure :</label>
+            <input type="time" name="heure" required>
+
+            <!-- Champ pour indiquer l'urgence de la tâche -->
+            <label class="urgent-label" for="urgent">Urgent :</label>
+            <input type="checkbox" name="urgent" id="urgent" class="urgent-checkbox">
+            
+            <!-- Bouton pour soumettre le formulaire -->
+            <button type="submit">Ajouter</button>
+        </form>
+
+        <!-- Affichage de la liste des tâches -->
+        {% if taches %}
+            <ul>
+                <h2>Vos prochains événements</h2>
+                
+                <!-- Formulaire pour trier les événements -->
+                <form action="/trier_evenements" method="post">
+                    <label for="tri">Trier par :</label>
+                    <select name="tri" id="tri">
+                        <option value="nom" selected>Nom</option>
+                        <option value="date">Date</option>
+                        <option value="creation">Création</option>
+                    </select>
+
+                    
+                    <!-- Bouton pour soumettre le formulaire de tri -->
+                    <button type="submit">Trier</button>
+                
+                    <!-- Bouton pour retourner à la page d'accueil -->
+                    <a href="{{ url_for('accueil') }}">
+                        <button type="button">Retour</button>
+                    </a>
+                </form>
+            
+                <!-- Affichage de chaque tâche -->
+                {% for tache in taches %}
+                    <li>
+                        <strong>Evénement:</strong> {{ tache.titre }}<br>
+                        <strong>Sujet:</strong> {{ tache.contenu }}<br>
+                        <strong>Date et Heure:</strong> {{ tache.date }}<br>
+                        <strong>Urgent:</strong> {% if tache.urgent %}Oui{% else %}Non{% endif %}<br>
+                        <strong>Créé le:</strong> {{ tache.creation }}<br><br>
+                        <!-- Lien pour supprimer la tâche -->
+                        <a href="{{ url_for('supprimer_tache', id=tache.id) }}">Supprimer</a>
+                    </li>
                 {% endfor %}
             </ul>
+        {% else %}
+            <!-- Message s'il n'y a pas d'événement à afficher -->
+            <p>Aucun événement à afficher.</p>
         {% endif %}
-    {% endwith %}
-    
-    <form action="/ajouter_tache" method="post">
-        <label for="titre">Nouveau Titre :</label>
-        <input type="text" name="titre" required>
-        
-        <label for="contenu">Nouveau Contenu :</label>
-        <textarea name="contenu" required></textarea>
-        
-        <label for="date">Date :</label>
-        <input type="date" name="date" min="{{ date_actuelle }}" required>
-        
-        <label for="heure">Heure :</label>
-        <input type="time" name="heure" required>
-
-        <label for="urgent">Urgent :</label>
-        <input type="checkbox" name="urgent" id="urgent" class="urgent-checkbox">
-        
-        
-        <button type="submit">Ajouter</button>
-    </form>
-    
-    
-    {% if taches %}
-        <ul>
-            <h2>Vos prochains événements</h2>
-            
-            <form action="/trier_evenements" method="post">
-                <label for="tri">Trier par :</label>
-                <select name="tri" id="tri">
-                    <option value="urgent">Priorité</option>
-                    <option value="nom">Nom</option>
-                    <option value="date">Date</option>
-                </select>
-                <button type="submit">Trier</button>
-            
-                <a href="{{ url_for('accueil') }}">
-                    <button type="button">Retour</button>
-                </a>
-            </form>
-        
-            {% for tache in taches %}
-            <li>
-                <strong>Evénement:</strong> {{ tache.titre }}<br>
-                <strong>Sujet:</strong> {{ tache.contenu }}<br>
-                <strong>Date et Heure:</strong> {{ tache.date }}<br>
-                <strong>Urgent:</strong> {% if tache.urgent %}Oui{% else %}Non{% endif %}<br>
-                <strong>Créé le:</strong> {{ tache.creation }}<br><br>
-                <a href="{{ url_for('supprimer_tache', id=tache.id) }}">Supprimer</a>
-            </li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>Aucun événement à afficher.</p>
-    {% endif %}
+    </div>
 </body>
 </html>
