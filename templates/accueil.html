@@ -63,10 +63,36 @@
         a:hover {
             text-decoration: underline;
         }
+
+        select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .urgent-checkbox {
+            margin-top: 10px;
+        }
+        
+    
     </style>
 </head>
 <body>
     <h1>Emploi du Temps</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    
     <form action="/ajouter_tache" method="post">
         <label for="titre">Nouveau Titre :</label>
         <input type="text" name="titre" required>
@@ -79,19 +105,40 @@
         
         <label for="heure">Heure :</label>
         <input type="time" name="heure" required>
+
+        <label for="urgent">Urgent :</label>
+        <input type="checkbox" name="urgent" id="urgent" class="urgent-checkbox">
+        
         
         <button type="submit">Ajouter</button>
     </form>
     
-    <ul>
-        {% for tache in taches %}
-            <li>
-                <strong>Evénement:</strong> {{ tache.titre }}<br>
-                <strong>Sujet:</strong> {{ tache.contenu }}<br>
-                <strong>Date et Heure:</strong> {{ tache.date }}
-                <a href="{{ url_for('supprimer_tache', id=tache.id) }}">Supprimer</a>
-            </li>
-        {% endfor %}
-    </ul>
+    
+    {% if taches %}
+        <ul>
+            <h2>Vos prochains événements</h2>
+            
+            <form action="/trier_evenements" method="post">
+                <label for="tri">Trier par :</label>
+                <select name="tri" id="tri">
+                    <option value="priorite">Priorité</option>
+                    <option value="nom">Nom</option>
+                    <option value="date">Date</option>
+                </select>
+                <button type="submit">Trier</button>
+            </form>
+        
+            {% for tache in taches %}
+                <li>
+                    <strong>Evénement:</strong> {{ tache.titre }}<br>
+                    <strong>Sujet:</strong> {{ tache.contenu }}<br>
+                    <strong>Date et Heure:</strong> {{ tache.date }}
+                    <a href="{{ url_for('supprimer_tache', id=tache.id) }}">Supprimer</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun événement à afficher.</p>
+    {% endif %}
 </body>
 </html>
