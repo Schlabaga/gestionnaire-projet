@@ -19,6 +19,8 @@ def initialiser_base_de_donnees(conn):
             )
         ''')
 
+print("Test2")
+
 # Classe représentant une tâche.
 class Tache:
     def __init__(self, id, titre, contenu, urgent, date, creation=None):
