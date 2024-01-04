@@ -153,8 +153,14 @@
         <div class="event-container">
             <!-- Affichage de la liste des tâches -->
             {% if taches %}
-                <ul>
+                <ul id="liste-taches">
                     <h2>Vos prochains événements&nbsp;:</h2>
+
+
+                    <!-- Champ pour rechercher des tâches -->
+                    <input type="text" id="search" onkeyup="searchFunction()" 
+                    placeholder="Rechercher dans tâches...">
+
                     
                     <!-- Formulaire pour trier les événements -->
                     <form action="/trier_evenements" method="post">
@@ -233,5 +239,24 @@
         </div>
         
     </div>
+    <script>
+        function searchFunction() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById('search');
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("liste-taches");
+            li = ul.getElementsByTagName('li');
+    
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 </body>
 </html>

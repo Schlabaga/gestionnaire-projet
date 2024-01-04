@@ -50,6 +50,15 @@ class GestionnaireTaches:
             cursor = conn.cursor()
             cursor.execute('SELECT id, titre, contenu, date FROM taches ORDER BY date')
             return [Tache(*row) for row in cursor.fetchall()]
+        
+    def recherche_taches(self, titre, taches):
+        if not taches:
+            return []
+        elif titre.lower() in taches[0].titre.lower():
+            return [taches[0]] + self.recherche_taches(titre, taches[1:])
+        else:
+            return self.recherche_taches(titre, taches[1:])
+
 
 
 class ApplicationTkinter:
