@@ -19,8 +19,6 @@ def initialiser_base_de_donnees(conn):
             )
         ''')
 
-
-
 # Classe représentant une tâche.
 class Tache:
     def __init__(self, id, titre, contenu, urgent, date, creation=None):
@@ -82,7 +80,7 @@ class GestionnaireTaches:
 
         self.taches = self.recuperer_taches()
         
-        
+
 # Classe représentant l'application Flask.
 class ApplicationFlask:
     
@@ -161,7 +159,7 @@ class ApplicationFlask:
             taches_triees = sorted(self.gestionnaire_taches.taches, key=lambda x: x.date)
 
         elif critere_tri == 'creation':
-            # Tri par date
+            # Tri par date de création
             taches_triees = sorted(self.gestionnaire_taches.taches, key=lambda x: x.creation)
 
         return render_template('accueil.html', taches=taches_triees)
