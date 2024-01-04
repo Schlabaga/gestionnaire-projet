@@ -19,7 +19,7 @@ def initialiser_base_de_donnees(conn):
             )
         ''')
 
-print("Test2")
+
 
 # Classe représentant une tâche.
 class Tache:
@@ -66,8 +66,23 @@ class GestionnaireTaches:
         with self.base_de_donnees as conn:
             cursor = conn.cursor()
             cursor.execute('SELECT id, titre, contenu, urgent, date, creation FROM taches ORDER BY date')
-            return [Tache(*row) for row in cursor.fetchall()]
+            return [Tache(row[0], row[1], row[2], row[3], datetime.strptime(row[4], '%d/%m/%Y %H:%M').date(), row[5]) for row in cursor.fetchall()]
 
+
+    # Méthode pour supprimer les tâches expirées
+    def supprimer_taches_expirees(self):
+        date_actuelle = date.today()
+        taches_expirees = [tache for tache in self.taches if tache.date < date_actuelle]
+
+        with self.base_de_donnees as conn:
+            cursor = conn.cursor()
+
+            for tache in taches_expirees:
+                cursor.execute('DELETE FROM taches WHERE id = ?', (tache.id,))
+
+        self.taches = self.recuperer_taches()
+        
+        
 # Classe représentant l'application Flask.
 class ApplicationFlask:
     
@@ -87,9 +102,12 @@ class ApplicationFlask:
 
     # Méthode pour afficher la page d'accueil avec la liste des tâches.
     def accueil(self):
+        # Supprimer les tâches expirées avant de récupérer la liste
+        self.gestionnaire_taches.supprimer_taches_expirees()
         taches = self.gestionnaire_taches.recuperer_taches()
-        return render_template('accueil.html', taches=taches)
 
+        return render_template('accueil.html', taches=taches)
+    
     # Méthode pour ajouter une nouvelle tâche à partir du formulaire.
     def ajouter_tache(self):
         if request.method == 'POST':

@@ -175,6 +175,7 @@
                         <strong>Date et Heure:</strong> {{ tache.date }}<br>
                         <strong>Urgent:</strong> {% if tache.urgent %}Oui{% else %}Non{% endif %}<br>
                         <strong>Créé le:</strong> {{ tache.creation }}<br><br>
+                        
                         <!-- Lien pour supprimer la tâche -->
                         <a href="{{ url_for('supprimer_tache', id=tache.id) }}">Supprimer</a>
                     </li>
