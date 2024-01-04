@@ -1,47 +1,42 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <!-- Métadonnées du document -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emploi du Temps</title>
-
-    <!-- Styles CSS en ligne -->
-    <style>
-        /* Styles pour le corps de la page */
-        body {
+    <style> /* Style CSS pour la page d'accueil */
+    
+        body { /* Style du corps de la page */
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
             margin: 20px;
         }
 
-        /* Styles pour les titres */
-        h1 {
-            color: #333;
+        h1 { /* Style du titre principal */
+                color: #333;
+                font-size: 2em;
+                text-decoration: underline;
+                text-align: center;
         }
-
-        /* Styles pour le formulaire */
-        form {
+                
+        form { /* Style du formulaire */
             margin-bottom: 20px;
         }
 
-        /* Styles pour les libellés des champs de formulaire */
-        label {
+        label { /* Style des labels */
             display: block;
             margin-bottom: 5px;
             color: #555;
         }
 
-        /* Styles pour les champs de formulaire */
-        input, textarea {
+        input, textarea { /* Style des champs de formulaire */
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
             box-sizing: border-box;
         }
 
-        /* Styles pour les boutons */
-        button {
+        button { /* Style des boutons */
             background-color: #4caf50;
             color: white;
             padding: 10px 15px;
@@ -50,13 +45,12 @@
             cursor: pointer;
         }
 
-        /* Styles pour les listes et éléments de liste */
-        ul {
+        ul { /* Style de la liste d'événements */
             list-style-type: none;
             padding: 0;
         }
 
-        li {
+        li { /* Style de chaque événement */
             background-color: #fff;
             border: 1px solid #ddd;
             margin-bottom: 10px;
@@ -64,20 +58,17 @@
             border-radius: 4px;
         }
 
-        /* Styles pour les liens */
-        a {
+        a { /* Style des liens */
             color: #4caf50;
             margin-left: 10px;
             text-decoration: none;
         }
 
-        /* Styles pour les liens au survol */
-        a:hover {
+        a:hover {  /* Style des liens au survol de la souris */
             text-decoration: underline;
         }
 
-        /* Styles pour les champs de sélection */
-        select {
+        select { /* Style des listes déroulantes */
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -87,27 +78,27 @@
             cursor: pointer;
         }
 
-        /* Styles pour le conteneur du formulaire */
-        .form-container {
+        .form-container { /* Style du conteneur du formulaire */
             width: 75%;
             margin: 0 auto;
         }
 
-        /* Styles pour les éléments liés à l'urgence */
-        .urgent-label {
+        .urgent-label { /* Style du label pour l'urgence de l'évènement */
             margin-top: 10px;
-            text-align: left; /* Mettez à jour pour aligner à gauche */
+            text-align: left;
         }
 
-        .urgent-checkbox {
+        .urgent-checkbox { /* Style de la checkbox pour l'urgence de l'évènement */
             margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <!-- Conteneur principal avec le formulaire et la liste d'événements -->
+    <h1>Emploi du Temps</h1>
+
     <div class="form-container">
-        <h1>Emploi du Temps</h1>
+        <h2>Ajouter un nouvel événement&nbsp;:</h2>
 
         <!-- Affichage des messages flash (erreurs ou succès) -->
         {% with messages = get_flashed_messages() %}
@@ -123,20 +114,20 @@
         <!-- Formulaire pour ajouter une nouvelle tâche -->
         <form action="/ajouter_tache" method="post">
             
-            <label for="titre">Nouveau Titre :</label>
+            <label for="titre">Nouveau Titre&nbsp;:</label>
             <input type="text" name="titre" required>
             
-            <label for="contenu">Nouveau Contenu :</label>
+            <label for="contenu">Nouveau Contenu&nbsp;:</label>
             <textarea name="contenu" required></textarea>
             
-            <label for="date">Date :</label>
+            <label for="date">Date&nbsp;:</label>
             <input type="date" name="date" min="{{ date_actuelle }}" required>
             
-            <label for="heure">Heure :</label>
+            <label for="heure">Heure&nbsp;:</label>
             <input type="time" name="heure" required>
 
             <!-- Champ pour indiquer l'urgence de la tâche -->
-            <label class="urgent-label" for="urgent">Urgent :</label>
+            <label class="urgent-label" for="urgent">Urgent&nbsp;:</label>
             <input type="checkbox" name="urgent" id="urgent" class="urgent-checkbox">
             
             <!-- Bouton pour soumettre le formulaire -->
