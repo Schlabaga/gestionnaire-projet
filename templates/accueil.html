@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emploi du Temps</title>
     <style> /* Style CSS pour la page d'accueil */
-    
+
         body { /* Style du corps de la page */
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
@@ -83,13 +83,13 @@
             margin: 0 auto;
         }
 
-        .urgent-label { /* Style du label pour l'urgence de l'évènement */
+        .urgent-label, .urgent-checkbox { /* Style du label et de la checkbox pour l'urgence de l'évènement */
+            display: inline-block;
             margin-top: 10px;
-            text-align: left;
         }
 
-        .urgent-checkbox { /* Style de la checkbox pour l'urgence de l'évènement */
-            margin-top: 10px;
+        .urgent-label {
+            text-align: left;
         }
     </style>
 </head>
@@ -141,7 +141,7 @@
                 
                 <!-- Formulaire pour trier les événements -->
                 <form action="/trier_evenements" method="post">
-                    <label for="tri">Trier par :</label>
+                    <label for="tri">Trier par&nbsp;:</label>
                     <select name="tri" id="tri">
                         <option value="nom" selected>Nom</option>
                         <option value="date">Date</option>
