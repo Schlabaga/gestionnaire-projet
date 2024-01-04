@@ -81,6 +81,10 @@
             border-radius: 4px;
         }
 
+        .urgent { /* Style des événements urgents */
+            background-color: #ffc9d1; /* Couleur rose pâle */
+        }
+
         a { /* Style des liens */
             color: #4caf50;
             margin-left: 10px;
@@ -173,7 +177,7 @@
                 
                     <!-- Affichage de chaque tâche -->
                     {% for tache in taches %}
-                        <li>
+                        <li class="{{ 'urgent' if tache.urgent else '' }}">
                             <strong>Evénement:</strong> {{ tache.titre }}<br>
                             <strong>Sujet:</strong> {{ tache.contenu }}<br>
                             <strong>Date et Heure:</strong> {{ tache.date }}<br>
