@@ -80,7 +80,31 @@ class GestionnaireTaches:
 
         self.taches = self.recuperer_taches()
         
+    def tri_fusion_par_date_recursif(self, taches):
+        if len(taches) <= 1:
+            return taches
+        else:
+            milieu = len(taches) // 2
+            taches_gauche = taches[:milieu]
+            taches_droite = taches[milieu:]
+            return self.fusionner(self.tri_fusion_par_date_recursif(taches_gauche), self.tri_fusion_par_date_recursif(taches_droite))
+        
+    def fusionner(self, taches_gauche, taches_droite):
+        resultat = []
+        i = j = 0
 
+        while i < len(taches_gauche) and j < len(taches_droite):
+            if taches_gauche[i].date < taches_droite[j].date:
+                resultat.append(taches_gauche[i])
+                i += 1
+            else:
+                resultat.append(taches_droite[j])
+                j += 1
+
+        resultat.extend(taches_gauche[i:])
+        resultat.extend(taches_droite[j:])
+        return resultat
+    
 # Classe représentant l'application Flask.
 class ApplicationFlask:
     
@@ -156,8 +180,8 @@ class ApplicationFlask:
             taches_triees = self.tri_rapide_par_nom(self.gestionnaire_taches.taches)
 
         elif critere_tri == 'date':
-            # Tri par date
-            taches_triees = sorted(self.gestionnaire_taches.taches, key=lambda x: x.date)
+            # Tri fusion par date (remplaçant la méthode sorted)
+            taches_triees = self.gestionnaire_taches.tri_fusion_par_date_recursif(self.gestionnaire_taches.taches)
 
         elif critere_tri == 'creation':
             # Tri par date de création
