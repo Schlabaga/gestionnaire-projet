@@ -64,8 +64,16 @@ class GestionnaireTaches:
         with self.base_de_donnees as conn:
             cursor = conn.cursor()
             cursor.execute('SELECT id, titre, contenu, urgent, date, creation FROM taches ORDER BY date')
-            return [Tache(row[0], row[1], row[2], row[3], datetime.strptime(row[4], '%d/%m/%Y %H:%M').date(), row[5]) for row in cursor.fetchall()]
+            rows = cursor.fetchall()
+            taches = []
+            
+            for row in rows:
+                id, titre, contenu, urgent, date_str, creation_str = row
+                date_obj = datetime.strptime(date_str, '%d/%m/%Y %H:%M').date()
+                creation_obj = datetime.strptime(creation_str, '%Y-%m-%d %H:%M:%S.%f')
+                taches.append(Tache(id, titre, contenu, urgent, date_obj, creation_obj))
 
+        return taches
 
     # Méthode pour supprimer les tâches expirées
     def supprimer_taches_expirees(self):
