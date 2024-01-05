@@ -48,20 +48,12 @@ class GestionnaireTaches:
 
         self.taches = self.recuperer_taches()
 
-    app = Flask(__name__)
 
     def recuperer_taches(self):
         with self.base_de_donnees as conn:
             cursor = conn.cursor()
             cursor.execute('SELECT id, titre, contenu, date FROM taches ORDER BY date')
             return [Tache(*row) for row in cursor.fetchall()]
-
-    # fonction de recherche dans les tâches 
-    @app.route('/rechercher_taches', methods=['POST'])
-    def rechercher_taches():
-        titre = request.form.get('titre')
-        taches = Tache.query.filter(Tache.titre.ilike(f'%{titre}%')).all()
-        return render_template('accueil.html', taches=taches)
 
 
 

@@ -66,7 +66,16 @@ class GestionnaireTaches:
             cursor.execute('SELECT id, titre, contenu, urgent, date, creation FROM taches ORDER BY date')
             return [Tache(row[0], row[1], row[2], row[3], datetime.strptime(row[4], '%d/%m/%Y %H:%M').date(), row[5]) for row in cursor.fetchall()]
 
+    
+    app = Flask(__name__)
 
+    # Méthode pour rechercher les tâches par titre.
+    @app.route('/rechercher_taches', methods=['POST'])
+    def rechercher_taches():
+        titre = request.form.get('titre')
+        taches = Tache.query.filter(Tache.titre.ilike(f'%{titre}%')).all()
+        return render_template('accueil.html', taches=taches)
+    
     # Méthode pour supprimer les tâches expirées
     def supprimer_taches_expirees(self):
         date_actuelle = date.today()
