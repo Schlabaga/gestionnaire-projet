@@ -97,6 +97,7 @@ class ApplicationFlask:
         self.app.route('/ajouter_tache', methods=['POST'])(self.ajouter_tache)
         self.app.route('/supprimer_tache/<int:id>')(self.supprimer_tache)
         self.app.route('/trier_evenements', methods=['POST'])(self.trier_evenements)
+        
 
     # Méthode pour afficher la page d'accueil avec la liste des tâches.
     def accueil(self):
@@ -134,7 +135,8 @@ class ApplicationFlask:
         self.gestionnaire_taches.supprimer_tache(id)
         return redirect(url_for('accueil'))
 
-    def tri_rapide_par_nom(self, taches): #FONCTION RECURSIVE DE TRI
+    # Fonction récursive de tri utilisant la méthode QuickSort 
+    def tri_rapide_par_nom(self, taches): 
         
         if len(taches) <= 1:
             return taches
@@ -143,7 +145,6 @@ class ApplicationFlask:
             taches_inf = [tache for tache in taches[1:] if tache.titre < pivot.titre]
             taches_sup = [tache for tache in taches[1:] if tache.titre >= pivot.titre]
             return self.tri_rapide_par_nom(taches_inf) + [pivot] + self.tri_rapide_par_nom(taches_sup)
-
 
     # Méthode pour trier les tâches en fonction du critère spécifié.
     def trier_evenements(self):
