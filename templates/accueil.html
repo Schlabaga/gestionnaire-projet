@@ -241,22 +241,21 @@
     </div>
     <script>
         function searchFunction() {
-            var input, filter, ul, li, a, i, txtValue;
-            input = document.getElementById('search');
-            filter = input.value.toUpperCase();
-            ul = document.getElementById("liste-taches");
-            li = ul.getElementsByTagName('li');
-    
-            for (i = 0; i < li.length; i++) {
-                a = li[i].getElementsByTagName("a")[0];
-                txtValue = a.textContent || a.innerText;
+            var input = document.getElementById('search');
+            var filter = input.value.toUpperCase();
+            var ul = document.getElementById("liste-taches");
+            var li = ul.getElementsByTagName('li');
+
+            // Parcourir tous les éléments de la liste et les cacher si ils ne correspondent pas à la recherche
+            for (var i = 0; i < li.length; i++) {
+                var txtValue = li[i].textContent || li[i].innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
                     li[i].style.display = "";
                 } else {
                     li[i].style.display = "none";
                 }
             }
-        }
+    }
     </script>
 </body>
 </html>

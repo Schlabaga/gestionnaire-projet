@@ -2,6 +2,9 @@ import sqlite3
 from tkinter import Tk, Label, Button, Entry, Listbox, END
 from tkcalendar import DateEntry  
 from datetime import datetime, date
+from flask import request
+from flask import render_template
+from flask import Flask
 
 
 def initialiser_base_de_donnees(conn):
@@ -45,19 +48,20 @@ class GestionnaireTaches:
 
         self.taches = self.recuperer_taches()
 
+    app = Flask(__name__)
+
     def recuperer_taches(self):
         with self.base_de_donnees as conn:
             cursor = conn.cursor()
             cursor.execute('SELECT id, titre, contenu, date FROM taches ORDER BY date')
             return [Tache(*row) for row in cursor.fetchall()]
-        
-    def recherche_taches(self, titre, taches):
-        if not taches:
-            return []
-        elif titre.lower() in taches[0].titre.lower():
-            return [taches[0]] + self.recherche_taches(titre, taches[1:])
-        else:
-            return self.recherche_taches(titre, taches[1:])
+
+    # fonction de recherche dans les tâches 
+    @app.route('/rechercher_taches', methods=['POST'])
+    def rechercher_taches():
+        titre = request.form.get('titre')
+        taches = Tache.query.filter(Tache.titre.ilike(f'%{titre}%')).all()
+        return render_template('accueil.html', taches=taches)
 
 
 
