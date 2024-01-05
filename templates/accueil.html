@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emploi du Temps</title>
+    <title>Gestionnaire de tâches</title>
     <style> /* Style CSS pour la page d'accueil */
 
         body { /* Style du corps de la page */
@@ -147,7 +147,7 @@
 </head>
 <body>
     <!-- Conteneur principal avec le formulaire et la liste d'événements -->
-    <h1>EMPLOI DU TEMPS</h1>
+    <h1>GESTIONNAIRE DE TACHES</h1>
     <div class="container">
         <div class="event-container">
             <!-- Affichage de la liste des tâches -->
@@ -185,7 +185,7 @@
                         <li class="{{ 'urgent' if tache.urgent else '' }}">
                             <strong>Evénement:</strong> {{ tache.titre }}<br>
                             <strong>Sujet:</strong> {{ tache.contenu }}<br>
-                            <strong>Date et Heure:</strong> {{ tache.date }}<br>
+                            <strong>Date:</strong> {{ tache.date }}<br>
                             <strong>Urgent:</strong> {% if tache.urgent %}Oui{% else %}Non{% endif %}<br>
                             <strong>Créé le:</strong> {{ tache.creation.strftime('%Y-%m-%d') }}<br><br> 
                             <!-- Lien pour supprimer la tâche -->
